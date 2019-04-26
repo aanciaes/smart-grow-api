@@ -9,10 +9,10 @@ import (
 )
 
 func setHandlers (r *mux.Router) {
-	r.Handle("/", handlerGenericWrapper(handlers.Hello))
+	r.Handle("/", secureEndpoint(handlers.Hello))
 }
 
-func handlerGenericWrapper (h http.HandlerFunc) http.Handler {
+func secureEndpoint (h http.HandlerFunc) http.Handler {
 	return http.HandlerFunc( func (w http.ResponseWriter, r *http.Request) {
 		log.Println("Before")
 		h.ServeHTTP(w, r)
@@ -21,10 +21,11 @@ func handlerGenericWrapper (h http.HandlerFunc) http.Handler {
 }
 
 func main() {
+	_, err := database.ConfigDatabase()
+	database.BootstrapDatabase()
+
 	r := mux.NewRouter()
 	setHandlers(r)
-
-	_, err := database.ConfigDatabase()
 
 	if err == nil {
 		log.Println("Starting server, listening at port 8000")
