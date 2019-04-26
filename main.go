@@ -6,15 +6,16 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
 )
 
 func setHandlers (r *mux.Router) {
-	r.Handle("/", secureEndpoint(handlers.Hello))
+	r.HandleFunc("/", handlers.Hello).Methods("GET")
 }
 
 func secureEndpoint (h http.HandlerFunc) http.Handler {
 	return http.HandlerFunc( func (w http.ResponseWriter, r *http.Request) {
-		log.Println("Before")
+		log.Println("Secure")
 		h.ServeHTTP(w, r)
 		defer log.Println("After")
 	})
@@ -29,7 +30,7 @@ func main() {
 
 	if err == nil {
 		log.Println("Starting server, listening at port 8000")
-		log.Fatal(http.ListenAndServe(":8000", r))
+		log.Fatal(http.ListenAndServe(":8000", handlers.LoggingWrapper(os.Stdout, r)))
 	} else {
 		log.Fatal(err)
 	}
