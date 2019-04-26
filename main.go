@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/aanciaes/SmartGrow/config/database"
-	"github.com/aanciaes/SmartGrow/handlers"
+	"github.com/aanciaes/smart-grow-api/config/database"
+	"github.com/aanciaes/smart-grow-api/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
