@@ -10,15 +10,8 @@ import (
 )
 
 func setHandlers (r *mux.Router) {
-	r.HandleFunc("/", handlers.Hello).Methods("GET")
-}
-
-func secureEndpoint (h http.HandlerFunc) http.Handler {
-	return http.HandlerFunc( func (w http.ResponseWriter, r *http.Request) {
-		log.Println("Secure")
-		h.ServeHTTP(w, r)
-		defer log.Println("After")
-	})
+	r.HandleFunc("/login", handlers.Login).Methods("GET")
+	r.Handle("/admin", handlers.SecureEndpoint(handlers.AdminFunc)).Methods("GET")
 }
 
 func main() {
