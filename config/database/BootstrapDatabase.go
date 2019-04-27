@@ -1,6 +1,7 @@
 package database
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
@@ -17,6 +18,18 @@ func BootstrapDatabase() {
 		log.Fatal(err)
 	}
 	_, err = db.Exec("insert into temperature_readings (reading) values (?)", 24)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table users (id INTEGER PRIMARY KEY, username varchar, password varchar, isAdmin number)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	bytes, err := bcrypt.GenerateFromPassword([]byte("admin"), 14)
+	hashedPassword := string(bytes)
+	_, err = db.Exec("insert into users (username, password, isAdmin) values (?, ?, ?)", "admin", hashedPassword, 1)
 	if err != nil {
 		log.Fatal(err)
 	}

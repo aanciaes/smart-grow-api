@@ -5,6 +5,7 @@ external_dependencies=(
     "github.com/gorilla/mux"
     "github.com/mattn/go-sqlite3"
     "github.com/dgrijalva/jwt-go"
+     golang.org/x/crypto/bcrypt
 )
 
 for item in ${external_dependencies[*]}
