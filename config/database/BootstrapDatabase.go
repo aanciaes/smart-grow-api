@@ -34,6 +34,13 @@ func BootstrapDatabase() {
 		log.Fatal(err)
 	}
 
+	bytes, err = bcrypt.GenerateFromPassword([]byte("miguel"), 14)
+	hashedPassword = string(bytes)
+	_, err = db.Exec("insert into users (username, password, isAdmin) values (?, ?, ?)", "miguel", hashedPassword, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	/*rows, err := db.Query("select * from temperature_readings")
 	if err != nil {
 		log.Fatal(err)

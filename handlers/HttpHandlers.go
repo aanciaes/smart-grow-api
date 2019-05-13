@@ -3,25 +3,24 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aanciaes/smart-grow-api/model"
 	"github.com/aanciaes/smart-grow-api/security"
 	"net/http"
 )
 
-type loginForm struct {
-	Username string `json:username`
-	Password string `json:password`
-}
+
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 
-	var login loginForm
+	var login model.LoginForm
 	err := decoder.Decode(&login)
 
 	if err == nil {
-		if security.CheckPasswordHash(login.Username, login.Password) {
-			token, err := generateJwt()
+		user, authorized := security.CheckPasswordHash(login.Username, login.Password)
+		if authorized {
+			token, err := generateJwt(user)
 
 			if err == nil {
 				var _, err = fmt.Fprintf(w, token)

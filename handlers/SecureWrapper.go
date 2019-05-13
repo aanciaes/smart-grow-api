@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/rsa"
 	"fmt"
+	"github.com/aanciaes/smart-grow-api/model"
 	"github.com/dgrijalva/jwt-go"
 	"io/ioutil"
 	"log"
@@ -62,11 +63,13 @@ func validateJwt(tokenString string) bool {
 	}
 }
 
-func generateJwt() (string, error) {
+func generateJwt(user model.User) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS512, jwt.MapClaims{
-		"foo": "bar",
-		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+		"userId": user.Id,
+		"username": user.Name,
+		"isAdmin": user.IsAdmin,
+		"nbf": time.Now(),
 		"exp": time.Now().Add(time.Minute * 1).Unix(),
 	})
 
