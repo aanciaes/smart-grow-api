@@ -51,7 +51,7 @@ func main() {
 			TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 		}
 
-		log.Println("Starting SSL server, listening at port l443")
+		log.Println("Starting SSL server, listening at port 443")
 		log.Fatal(srv.ListenAndServeTLS("keys/tls.crt", "keys/tls.key"))
 	} else {
 		log.Fatal(err)

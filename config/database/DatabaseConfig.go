@@ -10,7 +10,7 @@ import (
 
 const (
 	DEV = "dev"
-	STAGING = "staging"
+	PROD = "prod"
 )
 
 type Database struct {
@@ -29,14 +29,14 @@ func ConfigDatabase () (*Database, error) {
 	if env == DEV {
 		return configDevDatabase()
 	} else {
-		return configStagingDatabase()
+		return configProdDatabase()
 	}
 }
 
-func configStagingDatabase () (*Database, error){
-	log.Printf("Starting configuration for %s environment", STAGING)
+func configProdDatabase () (*Database, error){
+	log.Printf("Starting configuration for %s environment", PROD)
 
-	db, _ := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/league_manager")
+	db, _ := sql.Open("mysql", "root:smartgrow@tcp(mysql-db:3306)/smartgrow")
 
 	// Checks for database connection errors since sql open will only validate arguments
 	// without actually creating a connection
