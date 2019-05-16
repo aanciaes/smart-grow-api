@@ -84,7 +84,7 @@ func createTablesForProd (db *sql.DB) {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, username text UNIQUE, password text, isAdmin boolean)")
+	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, username VARCHAR (255) UNIQUE, password text, isAdmin boolean)")
 	if err != nil {
 		log.Fatal(err)
 	}
