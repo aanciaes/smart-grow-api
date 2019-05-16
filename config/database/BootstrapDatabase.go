@@ -13,13 +13,12 @@ func BootstrapDatabase() {
 	}
 	db := Conn.Connection
 
-
-	_, err := db.Exec("create table if not exists temperature_readings (id INTEGER AUTO_INCREMENT PRIMARY KEY, reading text)")
+	_, err := db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTOINCREMENT, reading text)")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create table if not exists users (id INTEGER AUTO_INCREMENT PRIMARY KEY, username text, password text, isAdmin boolean)")
+	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text UNIQUE, password text, isAdmin boolean)")
 	if err != nil {
 		log.Fatal(err)
 	}
