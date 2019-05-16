@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"os"
@@ -11,20 +12,13 @@ func BootstrapDatabase() {
 	if env == "" {
 		env = DEV
 	}
+
 	db := Conn.Connection
 
-	_, err := db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTOINCREMENT, reading text)")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text UNIQUE, password text, isAdmin boolean)")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	if env == DEV {
-		_, err = db.Exec("insert into temperature_readings (reading) values (?)", 23)
+		createTablesForDev(db)
+
+		_, err := db.Exec("insert into temperature_readings (reading) values (?)", 23)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -46,6 +40,8 @@ func BootstrapDatabase() {
 		if err != nil {
 			log.Fatal(err)
 		}
+	} else {
+		createTablesForProd(db)
 	}
 	/*rows, err := db.Query("select * from temperature_readings")
 	if err != nil {
@@ -66,4 +62,30 @@ func BootstrapDatabase() {
 		fmt.Println(id)
 		fmt.Println(reading)
 	}*/
+}
+
+func createTablesForDev (db *sql.DB) {
+
+	_, err := db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTOINCREMENT, reading text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text UNIQUE, password text, isAdmin boolean)")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func createTablesForProd (db *sql.DB) {
+
+	_, err := db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, username text UNIQUE, password text, isAdmin boolean)")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
