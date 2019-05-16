@@ -10,6 +10,16 @@ import (
 	"os"
 )
 
+func redirectHttpsHandler (w http.ResponseWriter, req *http.Request) {
+	// remove/add not default ports from req.Host
+	target := "https://" + req.Host + req.URL.Path
+	if len(req.URL.RawQuery) > 0 {
+		target += "?" + req.URL.RawQuery
+	}
+	log.Printf("redirect to: %s", target)
+	http.Redirect(w, req, target, http.StatusTemporaryRedirect)
+}
+
 func setHandlers (r *mux.Router) {
 	r.Handle("/", http.FileServer(http.Dir("static")))
 	r.HandleFunc("/login", handlers.Login).Methods("POST")
@@ -59,6 +69,9 @@ func main() {
 		if env == "" {
 			env = "dev"
 		}
+
+		// redirect every http request to https
+		go http.ListenAndServe(":80", http.HandlerFunc(redirectHttpsHandler))
 
 		// Return database configuration based on environment variable
 		if env == "prod" {
