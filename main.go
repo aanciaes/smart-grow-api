@@ -52,7 +52,18 @@ func main() {
 		}
 
 		log.Println("Starting SSL server, listening at port 443")
-		log.Fatal(srv.ListenAndServeTLS("keys/tls.crt", "keys/tls.key"))
+
+		env := os.Getenv("APP_ENV")
+		if env == "" {
+			env = "dev"
+		}
+
+		// Return database configuration based on environment variable
+		if env == "prod" {
+			log.Fatal(srv.ListenAndServeTLS("keys/fullchain.pem", "keys/privkey.pem"))
+		} else {
+			log.Fatal(srv.ListenAndServeTLS("keys/tls.crt", "keys/tls.key"))
+		}
 	} else {
 		log.Fatal(err)
 	}
