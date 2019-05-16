@@ -19,7 +19,7 @@ func BootstrapDatabase() {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create table if not exists users (id INTEGER AUTO_INCREMENT PRIMARY KEY, username text, password text, isAdmin BIT)")
+	_, err = db.Exec("create table if not exists users (id INTEGER AUTO_INCREMENT PRIMARY KEY, username text, password text, isAdmin boolean)")
 	if err != nil {
 		log.Fatal(err)
 	}
