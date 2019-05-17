@@ -17,6 +17,7 @@ services:
       context: .
     ports:
       - "443:443"
+      - "80:80"
     environment:
       APP_ENV: prod
     depends_on:
