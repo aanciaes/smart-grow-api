@@ -12,8 +12,6 @@ WORKDIR /go/src/$PROJECT
 
 RUN chmod +x setup.sh
 
-EXPOSE 8000
-
 CMD ./setup.sh \
     && go install /go/src/$PROJECT \
     && $GOPATH/bin/$PROJECT_NAME

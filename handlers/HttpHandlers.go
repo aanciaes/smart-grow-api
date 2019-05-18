@@ -61,6 +61,19 @@ func Register (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetTemperature (w http.ResponseWriter, r *http.Request) {
+	reading, err := persistence.GetTemperature()
+
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(w)
+		encoder.Encode(reading)
+	} else {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func AdminFunc(w http.ResponseWriter, r *http.Request) {
 	var _, err = fmt.Fprintf(w, "admin")
 	if err != nil {

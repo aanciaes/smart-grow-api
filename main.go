@@ -24,6 +24,7 @@ func setHandlers (r *mux.Router) {
 	r.Handle("/", http.FileServer(http.Dir("static")))
 	r.HandleFunc("/login", handlers.Login).Methods("POST")
 	r.HandleFunc("/register", handlers.Register).Methods("POST")
+	r.HandleFunc("/temperature", handlers.GetTemperature).Methods("GET")
 	r.Handle("/admin", handlers.SecureEndpoint(handlers.AdminFunc)).Methods("GET")
 }
 

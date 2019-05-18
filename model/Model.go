@@ -18,3 +18,9 @@ type User struct {
 	Hash     string
 	IsAdmin  bool
 }
+
+type TemperatureReading struct {
+	Id int
+	Date string
+	Reading float32
+}
