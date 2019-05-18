@@ -19,6 +19,10 @@ type User struct {
 	IsAdmin  bool
 }
 
+type TemperatureReadingForm struct {
+	Reading float32
+}
+
 type TemperatureReading struct {
 	Id int
 	Date string

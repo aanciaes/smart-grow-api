@@ -51,7 +51,7 @@ func Register (w http.ResponseWriter, r *http.Request) {
 			err := persistence.RegisterUser(register); if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
-				w.WriteHeader(201)
+				w.WriteHeader(http.StatusCreated)
 			}
 		} else {
 			http.Error(w, "Passwords don't match", http.StatusBadRequest)
@@ -71,6 +71,26 @@ func GetTemperature (w http.ResponseWriter, r *http.Request) {
 		encoder.Encode(reading)
 	} else {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func CreateTemperature (w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+
+	var reading model.TemperatureReadingForm
+	err := decoder.Decode(&reading)
+
+	if err == nil {
+		err = persistence.CreateTemperatureReading(reading.Reading)
+
+		if err == nil {
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 }
 
