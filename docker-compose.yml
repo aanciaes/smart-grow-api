@@ -1,4 +1,4 @@
-version: '3.1'
+version: '2'
 
 services:
   mysql-db:
@@ -10,6 +10,7 @@ services:
       MYSQL_ROOT_PASSWORD: smartgrow
     expose:
       - 3306
+    mem_limit: 300m
 
   smart-grow:
     build:
@@ -22,3 +23,4 @@ services:
       APP_ENV: prod
     depends_on:
       - mysql-db
+    mem_limit: 300m
