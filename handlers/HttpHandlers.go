@@ -7,6 +7,7 @@ import (
 	"github.com/aanciaes/smart-grow-api/persistence"
 	"github.com/aanciaes/smart-grow-api/security"
 	"net/http"
+	"strconv"
 )
 
 
@@ -62,7 +63,16 @@ func Register (w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTemperature (w http.ResponseWriter, r *http.Request) {
-	reading, err := persistence.GetTemperature()
+	param := r.URL.Query().Get("readings")
+	var numberOfReadings int64
+
+	if param != "" {
+		numberOfReadings, _ = strconv.ParseInt(param, 10, 64)
+	} else {
+		numberOfReadings = 1
+	}
+	
+	reading, err := persistence.GetTemperature(numberOfReadings)
 
 	if err == nil {
 		w.Header().Set("Content-Type", "application/json")

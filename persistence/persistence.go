@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	insertQuery = "INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)"
-	lastTemperature = "SELECT * FROM temperature_readings ORDER BY dateOf DESC LIMIT 1"
+	insertQuery       = "INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)"
+	lastTemperature   = "SELECT * FROM temperature_readings ORDER BY dateOf DESC LIMIT ?"
 	createTemperature = "INSERT INTO temperature_readings (reading, dateOf) VALUES (?, ?)"
 )
 
@@ -27,32 +27,37 @@ func RegisterUser(registerForm model.RegisterForm) error {
 	}
 }
 
-func GetTemperature () (model.TemperatureReading, error) {
+func GetTemperature(numberOfReadings int64) ([]model.TemperatureReading, error) {
 	db := database.Conn.Connection
 
-	rows, err := db.Query(lastTemperature)
+	rows, err := db.Query(lastTemperature, numberOfReadings)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer rows.Close()
 
+	var rst = make([] model.TemperatureReading, 0)
+
 	var (
-		id int
+		id      int
 		reading float32
-		dateOf string
+		dateOf  string
 	)
 
-	rows.Next()
-	err =rows.Scan(&id, &reading, &dateOf)
-	if err != nil {
-		return model.TemperatureReading{}, err
+	for rows.Next() {
+		err = rows.Scan(&id, &reading, &dateOf)
+		if err != nil {
+			return [] model.TemperatureReading{}, err
+		}
+
+		rst = append(rst, model.TemperatureReading{Id:id, Reading:reading, Date:dateOf})
 	}
 
-	return model.TemperatureReading{Id:id, Reading:reading, Date:dateOf}, nil
+	return rst, nil
 }
 
-func CreateTemperatureReading (reading float32) error {
+func CreateTemperatureReading(reading float32) error {
 	db := database.Conn.Connection
 
 	_, err := db.Exec(createTemperature, reading, time.Now().String())
