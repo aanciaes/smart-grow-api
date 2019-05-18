@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
 )
@@ -54,7 +53,7 @@ func configProdDatabase () (*Database, error){
 func configDevDatabase () (*Database, error) {
 	log.Printf("Starting configuration for %s environment", DEV)
 
-	db, _ := sql.Open("sqlite3", ":memory:")
+	db, _ := sql.Open("mysql", "root:root@tcp(localhost:3306)/")
 
 	// Checks for database connection errors since sql open will only validate arguments
 	// without actually creating a connection

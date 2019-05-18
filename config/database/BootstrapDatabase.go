@@ -47,13 +47,27 @@ func BootstrapDatabase() {
 }
 
 func createTablesForDev (db *sql.DB) {
-
-	_, err := db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTOINCREMENT, reading text, dateOf text)")
+	_, err := db.Exec("DROP DATABASE IF EXISTS smartgrow")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, username text UNIQUE, password text, isAdmin boolean)")
+	_, err = db.Exec("CREATE DATABASE smartgrow")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("USE smartgrow")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, username VARCHAR (255) UNIQUE, password text, isAdmin boolean)")
 	if err != nil {
 		log.Fatal(err)
 	}

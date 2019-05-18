@@ -10,7 +10,6 @@ services:
       MYSQL_ROOT_PASSWORD: smartgrow
     expose:
       - 3306
-    mem_limit: 500m
 
   smart-grow:
     build:
@@ -23,4 +22,3 @@ services:
       APP_ENV: prod
     depends_on:
       - mysql-db
-    mem_limit: 300m
