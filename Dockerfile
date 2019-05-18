@@ -11,7 +11,9 @@ COPY . /go/src/$PROJECT
 WORKDIR /go/src/$PROJECT
 
 RUN chmod +x setup.sh
+RUN chmos +x wait-for-it.sh
 
-CMD ./setup.sh \
+CMD ./wait-for-it.sh -t 0 mysql-db:3306 -- echo "mysql-db is up" \
+    && ./setup.sh \
     && go install /go/src/$PROJECT \
     && $GOPATH/bin/$PROJECT_NAME
