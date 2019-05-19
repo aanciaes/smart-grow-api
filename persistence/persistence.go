@@ -60,7 +60,7 @@ func GetTemperature(numberOfReadings int64) ([]model.TemperatureReading, error) 
 func CreateTemperatureReading(reading float32) error {
 	db := database.Conn.Connection
 
-	_, err := db.Exec(createTemperature, reading, time.Now().String())
+	_, err := db.Exec(createTemperature, reading, time.Now().Unix())
 	if err != nil {
 		return err
 	}

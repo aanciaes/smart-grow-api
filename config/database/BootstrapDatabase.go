@@ -19,11 +19,11 @@ func BootstrapDatabase() {
 	if env == DEV {
 		createTablesForDev(db)
 
-		_, err := db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 23, time.Now().String())
+		_, err := db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 23, time.Now().Unix())
 		if err != nil {
 			log.Fatal(err)
 		}
-		_, err = db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 24, time.Now().String())
+		_, err = db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 24, time.Now().Unix())
 		if err != nil {
 			log.Fatal(err)
 		}
