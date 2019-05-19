@@ -5,12 +5,13 @@ import (
 	"github.com/aanciaes/smart-grow-api/model"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"sort"
 	"time"
 )
 
 const (
 	insertQuery       = "INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)"
-	lastTemperature   = "SELECT * FROM temperature_readings ORDER BY dateOf DESC LIMIT ?"
+	lastTemperatureDesc   = "SELECT * FROM temperature_readings ORDER BY dateOf DESC LIMIT ?"
 	createTemperature = "INSERT INTO temperature_readings (reading, dateOf) VALUES (?, ?)"
 )
 
@@ -27,10 +28,10 @@ func RegisterUser(registerForm model.RegisterForm) error {
 	}
 }
 
-func GetTemperature(numberOfReadings int64) ([]model.TemperatureReading, error) {
+func GetTemperature(numberOfReadings int64, asc bool) ([]model.TemperatureReading, error) {
 	db := database.Conn.Connection
 
-	rows, err := db.Query(lastTemperature, numberOfReadings)
+	rows, err := db.Query(lastTemperatureDesc, numberOfReadings)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,6 +55,13 @@ func GetTemperature(numberOfReadings int64) ([]model.TemperatureReading, error) 
 		rst = append(rst, model.TemperatureReading{Id:id, Reading:reading, Date:dateOf})
 	}
 
+	if asc {
+		sort.Slice(rst, func(i, j int) bool {
+			return rst[i].Date < rst[j].Date
+		})
+
+		return rst, nil
+	}
 	return rst, nil
 }
 

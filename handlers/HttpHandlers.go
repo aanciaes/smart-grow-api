@@ -65,14 +65,17 @@ func Register (w http.ResponseWriter, r *http.Request) {
 func GetTemperature (w http.ResponseWriter, r *http.Request) {
 	param := r.URL.Query().Get("readings")
 	var numberOfReadings int64
+	var asc bool
 
 	if param != "" {
 		numberOfReadings, _ = strconv.ParseInt(param, 10, 64)
+		asc = true
 	} else {
 		numberOfReadings = 1
+		asc = false
 	}
-	
-	reading, err := persistence.GetTemperature(numberOfReadings)
+
+	reading, err := persistence.GetTemperature(numberOfReadings, asc)
 
 	if err == nil {
 		w.Header().Set("Content-Type", "application/json")
