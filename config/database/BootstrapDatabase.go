@@ -17,36 +17,13 @@ func BootstrapDatabase() {
 	db := Conn.Connection
 
 	if env == DEV {
-		createTablesForDev(db)
-
-		_, err := db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 23, time.Now().Unix())
-		if err != nil {
-			log.Fatal(err)
-		}
-		_, err = db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 24, time.Now().Unix())
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		bytes, err := bcrypt.GenerateFromPassword([]byte("admin"), 14)
-		hashedPassword := string(bytes)
-		_, err = db.Exec("insert into users (username, password, isAdmin) values (?, ?, ?)", "admin", hashedPassword, 1)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		bytes, err = bcrypt.GenerateFromPassword([]byte("miguel"), 14)
-		hashedPassword = string(bytes)
-		_, err = db.Exec("insert into users (username, password, isAdmin) values (?, ?, ?)", "miguel", hashedPassword, 0)
-		if err != nil {
-			log.Fatal(err)
-		}
+		createEnvironmentForDev(db)
 	} else {
-		createTablesForProd(db)
+		createEnvironmentForProd(db)
 	}
 }
 
-func createTablesForDev (db *sql.DB) {
+func createEnvironmentForDev(db *sql.DB) {
 	_, err := db.Exec("DROP DATABASE IF EXISTS smartgrow")
 	if err != nil {
 		log.Fatal(err)
@@ -62,36 +39,46 @@ func createTablesForDev (db *sql.DB) {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	// Creates all necessary tables
+	createTables(db)
+
+	_, err = db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 23, time.Now().Unix())
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec("insert into temperature_readings (reading, dateOf) values (?, ?)", 24, time.Now().Unix())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, username VARCHAR (255) UNIQUE, password text, isAdmin boolean)")
+	bytes, err := bcrypt.GenerateFromPassword([]byte("admin"), 14)
+	hashedPassword := string(bytes)
+	_, err = db.Exec("insert into users (username, password, isAdmin) values (?, ?, ?)", "admin", hashedPassword, 1)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create table if not exists humidity_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	bytes, err = bcrypt.GenerateFromPassword([]byte("miguel"), 14)
+	hashedPassword = string(bytes)
+	_, err = db.Exec("insert into users (username, password, isAdmin) values (?, ?, ?)", "miguel", hashedPassword, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	_, err = db.Exec("create table if not exists light_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = db.Exec("create table if not exists soil_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-
 }
 
-func createTablesForProd (db *sql.DB) {
+func createEnvironmentForProd(db *sql.DB) {
+	createTables(db)
 
+	//creates admin user
+	bytes, err := bcrypt.GenerateFromPassword([]byte("admin"), 14)
+	hashedPassword := string(bytes)
+	_, err = db.Exec("insert into users (username, password, isAdmin) values (?, ?, ?)", "admin", hashedPassword, 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func createTables(db *sql.DB) {
 	_, err := db.Exec("create table if not exists temperature_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
 	if err != nil {
 		log.Fatal(err)
