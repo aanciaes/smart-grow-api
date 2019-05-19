@@ -10,8 +10,6 @@ import (
 	"strconv"
 )
 
-
-
 func Login(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
@@ -242,9 +240,12 @@ func CreateSoil (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AdminFunc(w http.ResponseWriter, r *http.Request) {
-	var _, err = fmt.Fprintf(w, "admin")
-	if err != nil {
-		_, _ = fmt.Fprintf(w, "An error occured: %d", err)
-	}
+func TurnOnOffLight (w http.ResponseWriter, r *http.Request) {
+	_ = r.URL.Query().Get("status")
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func WaterPlants (w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNoContent)
 }
