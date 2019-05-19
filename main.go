@@ -20,6 +20,12 @@ func redirectHttpsHandler (w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, target, http.StatusTemporaryRedirect)
 }
 
+func serveSingle(pattern string, filename string, r *mux.Router) {
+	r.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filename)
+	})
+}
+
 func setHandlers (r *mux.Router) {
 	r.Handle("/", http.FileServer(http.Dir("static")))
 	r.HandleFunc("/login", handlers.Login).Methods("POST")
@@ -27,6 +33,8 @@ func setHandlers (r *mux.Router) {
 	r.HandleFunc("/temperature", handlers.GetTemperature).Methods("GET")
 	r.HandleFunc("/temperature", handlers.CreateTemperature).Methods("POST")
 	r.Handle("/admin", handlers.SecureEndpoint(handlers.AdminFunc)).Methods("GET")
+
+	serveSingle("/favicon.ico", "./static/favicon.ico", r)
 }
 
 func main() {
