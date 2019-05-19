@@ -31,7 +31,13 @@ func setHandlers (r *mux.Router) {
 	r.HandleFunc("/login", handlers.Login).Methods("POST")
 	r.HandleFunc("/register", handlers.Register).Methods("POST")
 	r.HandleFunc("/temperature", handlers.GetTemperature).Methods("GET")
+	r.HandleFunc("/humidity", handlers.GetHumidity).Methods("GET")
+	r.HandleFunc("/light", handlers.GetLight).Methods("GET")
+	r.HandleFunc("/soil", handlers.GetSoil).Methods("GET")
 	r.HandleFunc("/temperature", handlers.CreateTemperature).Methods("POST")
+	r.HandleFunc("/humidity", handlers.CreateHumidity).Methods("POST")
+	r.HandleFunc("/light", handlers.CreateLight).Methods("POST")
+	r.HandleFunc("/soil", handlers.CreateSoil).Methods("POST")
 	r.Handle("/admin", handlers.SecureEndpoint(handlers.AdminFunc)).Methods("GET")
 
 	serveSingle("/favicon.ico", "./static/favicon.ico", r)

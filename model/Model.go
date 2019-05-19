@@ -19,11 +19,11 @@ type User struct {
 	IsAdmin  bool
 }
 
-type TemperatureReadingForm struct {
+type ReadingsForm struct {
 	Reading float32
 }
 
-type TemperatureReading struct {
+type Readings struct {
 	Id int
 	Date string
 	Reading float32

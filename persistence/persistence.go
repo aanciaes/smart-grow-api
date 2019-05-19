@@ -12,7 +12,13 @@ import (
 const (
 	insertQuery       = "INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)"
 	lastTemperatureDesc   = "SELECT * FROM temperature_readings ORDER BY dateOf DESC LIMIT ?"
+	lastHumidityDesc   = "SELECT * FROM humidity_readings ORDER BY dateOf DESC LIMIT ?"
+	lastLightDesc   = "SELECT * FROM light_readings ORDER BY dateOf DESC LIMIT ?"
+	lastSoilDesc   = "SELECT * FROM soil_readings ORDER BY dateOf DESC LIMIT ?"
 	createTemperature = "INSERT INTO temperature_readings (reading, dateOf) VALUES (?, ?)"
+	createHumidity = "INSERT INTO humidity_readings (reading, dateOf) VALUES (?, ?)"
+	createLight = "INSERT INTO light_readings (reading, dateOf) VALUES (?, ?)"
+	createSoil = "INSERT INTO soil_readings (reading, dateOf) VALUES (?, ?)"
 )
 
 func RegisterUser(registerForm model.RegisterForm) error {
@@ -28,7 +34,7 @@ func RegisterUser(registerForm model.RegisterForm) error {
 	}
 }
 
-func GetTemperature(numberOfReadings int64, asc bool) ([]model.TemperatureReading, error) {
+func GetTemperature(numberOfReadings int64, asc bool) ([]model.Readings, error) {
 	db := database.Conn.Connection
 
 	rows, err := db.Query(lastTemperatureDesc, numberOfReadings)
@@ -38,7 +44,7 @@ func GetTemperature(numberOfReadings int64, asc bool) ([]model.TemperatureReadin
 
 	defer rows.Close()
 
-	var rst = make([] model.TemperatureReading, 0)
+	var rst = make([] model.Readings, 0)
 
 	var (
 		id      int
@@ -49,10 +55,121 @@ func GetTemperature(numberOfReadings int64, asc bool) ([]model.TemperatureReadin
 	for rows.Next() {
 		err = rows.Scan(&id, &reading, &dateOf)
 		if err != nil {
-			return [] model.TemperatureReading{}, err
+			return [] model.Readings{}, err
 		}
 
-		rst = append(rst, model.TemperatureReading{Id:id, Reading:reading, Date:dateOf})
+		rst = append(rst, model.Readings{Id:id, Reading:reading, Date:dateOf})
+	}
+
+	if asc {
+		sort.Slice(rst, func(i, j int) bool {
+			return rst[i].Date < rst[j].Date
+		})
+
+		return rst, nil
+	}
+	return rst, nil
+}
+
+func GetHumidity(numberOfReadings int64, asc bool) ([]model.Readings, error) {
+	db := database.Conn.Connection
+
+	rows, err := db.Query(lastHumidityDesc, numberOfReadings)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var rst = make([] model.Readings, 0)
+
+	var (
+		id      int
+		reading float32
+		dateOf  string
+	)
+
+	for rows.Next() {
+		err = rows.Scan(&id, &reading, &dateOf)
+		if err != nil {
+			return [] model.Readings{}, err
+		}
+
+		rst = append(rst, model.Readings{Id:id, Reading:reading, Date:dateOf})
+	}
+
+	if asc {
+		sort.Slice(rst, func(i, j int) bool {
+			return rst[i].Date < rst[j].Date
+		})
+
+		return rst, nil
+	}
+	return rst, nil
+}
+
+func GetLight(numberOfReadings int64, asc bool) ([]model.Readings, error) {
+	db := database.Conn.Connection
+
+	rows, err := db.Query(lastLightDesc, numberOfReadings)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var rst = make([] model.Readings, 0)
+
+	var (
+		id      int
+		reading float32
+		dateOf  string
+	)
+
+	for rows.Next() {
+		err = rows.Scan(&id, &reading, &dateOf)
+		if err != nil {
+			return [] model.Readings{}, err
+		}
+
+		rst = append(rst, model.Readings{Id:id, Reading:reading, Date:dateOf})
+	}
+
+	if asc {
+		sort.Slice(rst, func(i, j int) bool {
+			return rst[i].Date < rst[j].Date
+		})
+
+		return rst, nil
+	}
+	return rst, nil
+}
+
+func GetSoil(numberOfReadings int64, asc bool) ([]model.Readings, error) {
+	db := database.Conn.Connection
+
+	rows, err := db.Query(lastSoilDesc, numberOfReadings)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var rst = make([] model.Readings, 0)
+
+	var (
+		id      int
+		reading float32
+		dateOf  string
+	)
+
+	for rows.Next() {
+		err = rows.Scan(&id, &reading, &dateOf)
+		if err != nil {
+			return [] model.Readings{}, err
+		}
+
+		rst = append(rst, model.Readings{Id:id, Reading:reading, Date:dateOf})
 	}
 
 	if asc {
@@ -69,6 +186,39 @@ func CreateTemperatureReading(reading float32) error {
 	db := database.Conn.Connection
 
 	_, err := db.Exec(createTemperature, reading, time.Now().Unix())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateHumidityReading(reading float32) error {
+	db := database.Conn.Connection
+
+	_, err := db.Exec(createHumidity, reading, time.Now().Unix())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateLightReading(reading float32) error {
+	db := database.Conn.Connection
+
+	_, err := db.Exec(createLight, reading, time.Now().Unix())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateSoilReading(reading float32) error {
+	db := database.Conn.Connection
+
+	_, err := db.Exec(createSoil, reading, time.Now().Unix())
 	if err != nil {
 		return err
 	}

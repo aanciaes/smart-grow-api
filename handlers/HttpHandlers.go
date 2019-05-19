@@ -87,15 +87,150 @@ func GetTemperature (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetHumidity (w http.ResponseWriter, r *http.Request) {
+	param := r.URL.Query().Get("readings")
+	var numberOfReadings int64
+	var asc bool
+
+	if param != "" {
+		numberOfReadings, _ = strconv.ParseInt(param, 10, 64)
+		asc = true
+	} else {
+		numberOfReadings = 1
+		asc = false
+	}
+
+	reading, err := persistence.GetHumidity(numberOfReadings, asc)
+
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(w)
+		encoder.Encode(reading)
+	} else {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func GetLight (w http.ResponseWriter, r *http.Request) {
+	param := r.URL.Query().Get("readings")
+	var numberOfReadings int64
+	var asc bool
+
+	if param != "" {
+		numberOfReadings, _ = strconv.ParseInt(param, 10, 64)
+		asc = true
+	} else {
+		numberOfReadings = 1
+		asc = false
+	}
+
+	reading, err := persistence.GetLight(numberOfReadings, asc)
+
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(w)
+		encoder.Encode(reading)
+	} else {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func GetSoil (w http.ResponseWriter, r *http.Request) {
+	param := r.URL.Query().Get("readings")
+	var numberOfReadings int64
+	var asc bool
+
+	if param != "" {
+		numberOfReadings, _ = strconv.ParseInt(param, 10, 64)
+		asc = true
+	} else {
+		numberOfReadings = 1
+		asc = false
+	}
+
+	reading, err := persistence.GetSoil(numberOfReadings, asc)
+
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(w)
+		encoder.Encode(reading)
+	} else {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func CreateTemperature (w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 
-	var reading model.TemperatureReadingForm
+	var reading model.ReadingsForm
 	err := decoder.Decode(&reading)
 
 	if err == nil {
 		err = persistence.CreateTemperatureReading(reading.Reading)
+
+		if err == nil {
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+}
+
+func CreateHumidity (w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+
+	var reading model.ReadingsForm
+	err := decoder.Decode(&reading)
+
+	if err == nil {
+		err = persistence.CreateHumidityReading(reading.Reading)
+
+		if err == nil {
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+}
+
+func CreateLight (w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+
+	var reading model.ReadingsForm
+	err := decoder.Decode(&reading)
+
+	if err == nil {
+		err = persistence.CreateLightReading(reading.Reading)
+
+		if err == nil {
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+}
+
+func CreateSoil (w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+
+	var reading model.ReadingsForm
+	err := decoder.Decode(&reading)
+
+	if err == nil {
+		err = persistence.CreateSoilReading(reading.Reading)
 
 		if err == nil {
 			w.WriteHeader(http.StatusCreated)

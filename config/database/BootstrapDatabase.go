@@ -71,6 +71,23 @@ func createTablesForDev (db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	_, err = db.Exec("create table if not exists humidity_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists light_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists soil_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+
 }
 
 func createTablesForProd (db *sql.DB) {
@@ -81,6 +98,21 @@ func createTablesForProd (db *sql.DB) {
 	}
 
 	_, err = db.Exec("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, username VARCHAR (255) UNIQUE, password text, isAdmin boolean)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists humidity_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists light_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists soil_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
 	if err != nil {
 		log.Fatal(err)
 	}
