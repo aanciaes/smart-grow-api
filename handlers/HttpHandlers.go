@@ -216,6 +216,7 @@ func CreateLight (w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	} else {
+		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 }
