@@ -270,3 +270,16 @@ func CreateRoutine (w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 }
+
+func GetRoutines (w http.ResponseWriter, r *http.Request) {
+	reading, err := persistence.GetRoutines()
+
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(w)
+		encoder.Encode(reading)
+	} else {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}

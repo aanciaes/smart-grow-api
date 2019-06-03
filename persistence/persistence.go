@@ -25,6 +25,7 @@ const (
 	routineChecker = "SELECT * FROM routines WHERE datetime < ?"
 	createRoutine =  "INSERT INTO routines (motor, datetime) VALUES (?, ?)"
 	deleteRoutine = "DELETE FROM routines WHERE id = ?"
+	getRoutines = "SELECT * FROM routines"
 )
 
 func RegisterUser(registerForm model.RegisterForm) error {
@@ -291,4 +292,34 @@ func CheckRoutines () {
 			//TODO: Request to arduino
 		}
 	}
+}
+
+func GetRoutines () ([]model.Routine, error) {
+	db := database.Conn.Connection
+
+	rows, err := db.Query(getRoutines)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var rst = make([] model.Routine, 0)
+
+	var (
+		id      int
+		output string
+		datetime  string
+	)
+
+	for rows.Next() {
+		err = rows.Scan(&id, &output, &datetime)
+		if err != nil {
+			return [] model.Routine{}, err
+		}
+
+		rst = append(rst, model.Routine{Id:id, Output:output, Datetime:datetime})
+	}
+
+	return rst, nil
 }
