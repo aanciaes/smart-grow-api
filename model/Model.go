@@ -41,5 +41,5 @@ type Routine struct {
 }
 
 type DeleteRoutineForm struct {
-	Id int
+	Id int `json:id`
 }
