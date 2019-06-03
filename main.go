@@ -2,11 +2,13 @@ package main
 
 import (
 	"crypto/tls"
+	"fmt"
 	"github.com/aanciaes/smart-grow-api/config/database"
 	"github.com/aanciaes/smart-grow-api/handlers"
 	"github.com/aanciaes/smart-grow-api/persistence"
 	"github.com/gorilla/mux"
 	"log"
+	"net"
 	"net/http"
 	"os"
 )
@@ -47,6 +49,23 @@ func setHandlers (r *mux.Router) {
 	serveSingle("/favicon.ico", "./static/favicon.ico", r)
 }
 
+func getIpAddress () string {
+	addr, err := net.InterfaceAddrs()
+	if err != nil {
+		fmt.Println("Oops: " + err.Error() + "\n")
+		os.Exit(1)
+	}
+	for _, a := range addr {
+		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+
+	return "127.0.0.1"
+}
+
 func main() {
 	_, err := database.ConfigDatabase()
 	database.BootstrapDatabase()
@@ -83,7 +102,7 @@ func main() {
 			TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 		}
 
-		log.Println("Starting SSL server, listening at port 443")
+		log.Printf("Starting SSL server, listening at %s:443\n", getIpAddress())
 
 		env := os.Getenv("APP_ENV")
 		if env == "" {
