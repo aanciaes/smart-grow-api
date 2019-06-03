@@ -28,3 +28,14 @@ type Readings struct {
 	Date string
 	Reading float32
 }
+
+type RoutineForm struct {
+	Datetime string `json:datetime`
+	Output string `json:output`
+}
+
+type Routine struct {
+	Id int
+	Datetime string
+	Output string
+}

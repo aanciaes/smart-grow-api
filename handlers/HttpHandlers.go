@@ -250,3 +250,23 @@ func TurnOnOffLight (w http.ResponseWriter, r *http.Request) {
 func WaterPlants (w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func CreateRoutine (w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+
+	var routine model.RoutineForm
+	err := decoder.Decode(&routine)
+
+	if err == nil {
+		err = persistence.CreateRoutine(routine)
+
+		if err == nil {
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+}

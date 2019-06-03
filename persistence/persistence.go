@@ -1,11 +1,13 @@
 package persistence
 
 import (
+	"fmt"
 	"github.com/aanciaes/smart-grow-api/config/database"
 	"github.com/aanciaes/smart-grow-api/model"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -19,6 +21,10 @@ const (
 	createHumidity = "INSERT INTO humidity_readings (reading, dateOf) VALUES (?, ?)"
 	createLight = "INSERT INTO light_readings (reading, dateOf) VALUES (?, ?)"
 	createSoil = "INSERT INTO soil_readings (reading, dateOf) VALUES (?, ?)"
+
+	routineChecker = "SELECT * FROM routines WHERE datetime < ?"
+	createRoutine =  "INSERT INTO routines (motor, datetime) VALUES (?, ?)"
+	deleteRoutine = "DELETE FROM routines WHERE id = ?"
 )
 
 func RegisterUser(registerForm model.RegisterForm) error {
@@ -224,4 +230,65 @@ func CreateSoilReading(reading float32) error {
 	}
 
 	return nil
+}
+
+func checkRoutines () (model.Routine, error) {
+	db := database.Conn.Connection
+
+	rows, err := db.Query(routineChecker, time.Now().UTC().Format("2006-01-02 03:04:05"))
+	if err != nil {
+		return model.Routine{}, err
+	}
+
+	var (
+		id      int
+		datetime string
+		output  string
+	)
+
+	defer rows.Close()
+	rows.Next()
+
+	err = rows.Scan(&id, &output, &datetime)
+	if err != nil {
+		return model.Routine{}, err
+	}
+
+	return model.Routine{Id:id, Datetime:datetime, Output:output}, nil
+}
+
+func CreateRoutine (routine model.RoutineForm) error {
+	db := database.Conn.Connection
+
+	datetimeString,_ := strconv.ParseInt(routine.Datetime, 10, 64)
+	datetime := time.Unix(datetimeString, 0)
+
+	_, err := db.Exec(createRoutine, routine.Output, datetime.UTC().Format("2006-01-02 03:04:05"))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteRoutine (id int) {
+	db := database.Conn.Connection
+	db.Exec(deleteRoutine, id)
+}
+
+func CheckRoutines () {
+	for true {
+		time.Sleep(10 * time.Second)
+
+		routine, err := checkRoutines()
+
+		if err != nil {
+			//fmt.Printf("Err: %s\n", err)
+		} else {
+			fmt.Printf("Routine for motor: %s with time: %s\n", routine.Output, routine.Datetime)
+			DeleteRoutine(routine.Id)
+
+			//TODO: Request to arduino
+		}
+	}
 }

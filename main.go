@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"github.com/aanciaes/smart-grow-api/config/database"
 	"github.com/aanciaes/smart-grow-api/handlers"
+	"github.com/aanciaes/smart-grow-api/persistence"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -40,6 +41,8 @@ func setHandlers (r *mux.Router) {
 	r.Handle("/soil", handlers.SecureEndpoint(handlers.CreateSoil)).Methods("POST")
 	r.Handle("/artificialLight", handlers.SecureEndpoint(handlers.TurnOnOffLight)).Methods("POST")
 	r.Handle("/waterPlants", handlers.SecureEndpoint(handlers.WaterPlants)).Methods("POST")
+
+	r.HandleFunc("/routine", handlers.CreateRoutine).Methods("POST")
 
 	serveSingle("/favicon.ico", "./static/favicon.ico", r)
 }
@@ -89,6 +92,7 @@ func main() {
 
 		// redirect every http request to https
 		go http.ListenAndServe(":80", http.HandlerFunc(redirectHttpsHandler))
+		go persistence.CheckRoutines()
 
 		// Return database configuration based on environment variable
 		if env == "prod" {

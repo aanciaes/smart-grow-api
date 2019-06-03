@@ -64,6 +64,16 @@ func createEnvironmentForDev(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	/*_, err = db.Exec("insert into routines (motor, datetime) values (?, ?)", "water", time.Now().UTC().Format("2006-01-02 03:04:05"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("insert into routines (motor, datetime) values (?, ?)", "water", time.Now().Add(time.Minute * 1).UTC().Format("2006-01-02 03:04:05"))
+	if err != nil {
+		log.Fatal(err)
+	}*/
 }
 
 func createEnvironmentForProd(db *sql.DB) {
@@ -100,6 +110,11 @@ func createTables(db *sql.DB) {
 	}
 
 	_, err = db.Exec("create table if not exists soil_readings (id INTEGER PRIMARY KEY AUTO_INCREMENT, reading text, dateOf text)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("create table if not exists routines (id INTEGER PRIMARY KEY AUTO_INCREMENT, motor text, datetime timestamp)")
 	if err != nil {
 		log.Fatal(err)
 	}
