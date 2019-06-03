@@ -192,7 +192,8 @@ func GetSoil(numberOfReadings int64, asc bool) ([]model.Readings, error) {
 func CreateTemperatureReading(reading float32) error {
 	db := database.Conn.Connection
 
-	_, err := db.Exec(createTemperature, reading, time.Now().Unix())
+	loc, _ := time.LoadLocation("Europe/Lisbon")
+	_, err := db.Exec(createTemperature, reading, time.Now().In(loc).Unix())
 	if err != nil {
 		return err
 	}
@@ -203,7 +204,8 @@ func CreateTemperatureReading(reading float32) error {
 func CreateHumidityReading(reading float32) error {
 	db := database.Conn.Connection
 
-	_, err := db.Exec(createHumidity, reading, time.Now().Unix())
+	loc, _ := time.LoadLocation("Europe/Lisbon")
+	_, err := db.Exec(createHumidity, reading, time.Now().In(loc).Unix())
 	if err != nil {
 		return err
 	}
@@ -214,7 +216,8 @@ func CreateHumidityReading(reading float32) error {
 func CreateLightReading(reading float32) error {
 	db := database.Conn.Connection
 
-	_, err := db.Exec(createLight, reading, time.Now().Unix())
+	loc, _ := time.LoadLocation("Europe/Lisbon")
+	_, err := db.Exec(createLight, reading, time.Now().In(loc).Unix())
 	if err != nil {
 		return err
 	}
@@ -225,7 +228,8 @@ func CreateLightReading(reading float32) error {
 func CreateSoilReading(reading float32) error {
 	db := database.Conn.Connection
 
-	_, err := db.Exec(createSoil, reading, time.Now().Unix())
+	loc, _ := time.LoadLocation("Europe/Lisbon")
+	_, err := db.Exec(createSoil, reading, time.Now().In(loc).Unix())
 	if err != nil {
 		return err
 	}
@@ -236,7 +240,8 @@ func CreateSoilReading(reading float32) error {
 func checkRoutines () (model.Routine, error) {
 	db := database.Conn.Connection
 
-	rows, err := db.Query(routineChecker, time.Now().UTC().Format("2006-01-02 03:04:05"))
+	loc, _ := time.LoadLocation("Europe/Lisbon")
+	rows, err := db.Query(routineChecker, time.Now().In(loc).Format("2006-01-02 03:04:05"))
 	if err != nil {
 		return model.Routine{}, err
 	}
@@ -264,7 +269,8 @@ func CreateRoutine (routine model.RoutineForm) error {
 	datetimeString,_ := strconv.ParseInt(routine.Datetime, 10, 64)
 	datetime := time.Unix(datetimeString, 0)
 
-	_, err := db.Exec(createRoutine, routine.Output, datetime.UTC().Format("2006-01-02 03:04:05"))
+	loc, _ := time.LoadLocation("Europe/Lisbon")
+	_, err := db.Exec(createRoutine, routine.Output, datetime.In(loc).Format("2006-01-02 03:04:05"))
 	if err != nil {
 		return err
 	}
