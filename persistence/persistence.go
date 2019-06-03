@@ -277,9 +277,11 @@ func CreateRoutine (routine model.RoutineForm) error {
 	return nil
 }
 
-func DeleteRoutine (id int) {
+func DeleteRoutine (id int) error {
 	db := database.Conn.Connection
-	db.Exec(deleteRoutine, id)
+	_, err := db.Exec(deleteRoutine, id)
+
+	return err
 }
 
 func CheckRoutines () {

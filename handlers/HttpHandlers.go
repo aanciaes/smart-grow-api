@@ -283,3 +283,23 @@ func GetRoutines (w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
+func DeleteRoutine (w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+
+	var routine model.DeleteRoutineForm
+	err := decoder.Decode(&routine)
+
+	if err == nil {
+		err = persistence.DeleteRoutine(routine.Id)
+
+		if err == nil {
+			w.WriteHeader(http.StatusNoContent)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+}

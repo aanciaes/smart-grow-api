@@ -39,3 +39,7 @@ type Routine struct {
 	Datetime string
 	Output string
 }
+
+type DeleteRoutineForm struct {
+	Id int
+}

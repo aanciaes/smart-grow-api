@@ -44,8 +44,9 @@ func setHandlers (r *mux.Router) {
 	r.Handle("/artificialLight", handlers.SecureEndpoint(handlers.TurnOnOffLight)).Methods("POST")
 	r.Handle("/waterPlants", handlers.SecureEndpoint(handlers.WaterPlants)).Methods("POST")
 
-	r.HandleFunc("/routine", handlers.CreateRoutine).Methods("POST")
-	r.HandleFunc("/routine", handlers.GetRoutines).Methods("GET")
+	r.Handle("/routine", handlers.SecureEndpoint(handlers.CreateRoutine)).Methods("POST")
+	r.Handle("/routine", handlers.SecureEndpoint(handlers.GetRoutines)).Methods("GET")
+	r.Handle("/routine", handlers.SecureEndpoint(handlers.DeleteRoutine)).Methods("DELETE")
 
 	serveSingle("/favicon.ico", "./static/favicon.ico", r)
 }
