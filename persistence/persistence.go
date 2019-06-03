@@ -269,7 +269,7 @@ func CreateRoutine (routine model.RoutineForm) error {
 	datetimeString,_ := strconv.ParseInt(routine.Datetime, 10, 64)
 	datetime := time.Unix(datetimeString, 0)
 
-	_, err := db.Exec(createRoutine, routine.Output, datetime.UTC().Format("2006-01-02 03:04:05"))
+	_, err := db.Exec(createRoutine, routine.Output, datetime.Format("2006-01-02 03:04:05"))
 	if err != nil {
 		return err
 	}
