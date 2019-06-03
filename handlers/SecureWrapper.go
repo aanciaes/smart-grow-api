@@ -69,7 +69,6 @@ func generateJwt(user model.User) (string, error) {
 		"userId": user.Id,
 		"username": user.Name,
 		"isAdmin": user.IsAdmin,
-		"nbf": time.Now(),
 		"exp": time.Now().Add(time.Minute * 1).Unix(),
 	})
 
