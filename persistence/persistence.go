@@ -217,7 +217,7 @@ func CreateLightReading(reading float32) error {
 	db := database.Conn.Connection
 
 	loc, _ := time.LoadLocation("Europe/Lisbon")
-	_, err := db.Exec(createLight, reading, time.Now().In(loc).Unix())
+	_, err := db.Exec(createLight, (reading/1023)*100, time.Now().In(loc).Unix())
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func CreateSoilReading(reading float32) error {
 	db := database.Conn.Connection
 
 	loc, _ := time.LoadLocation("Europe/Lisbon")
-	_, err := db.Exec(createSoil, reading, time.Now().In(loc).Unix())
+	_, err := db.Exec(createSoil, (reading/1023)*100, time.Now().In(loc).Unix())
 	if err != nil {
 		return err
 	}
